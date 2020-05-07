@@ -6,40 +6,57 @@ public class SelectOnClick : MonoBehaviour {
 
     private Ray ray;
     private RaycastHit hitData;
-    Behaviour halo;
+    LineRenderer circle;
+    private ObjectInfo selectedObjectInfo;
+
     private void Update() {
 
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hitData, 1000)) {
-            highlightedObject = hitData.transform.gameObject;
-
+        if (Physics.Raycast(ray, out hitData, 100)) {
+            
+            if (hitData.collider.tag == "Ground") {
+                highlightedObject = null;
+            }
+            else {
+                highlightedObject = hitData.transform.gameObject;
+            }
             if (Input.GetMouseButtonDown(0)) {
-                HaloOff(selectedObject);
-                selectedObject = highlightedObject;
-                HaloOn(selectedObject);
-                
+                LeftClick();
             }
         } else {
             highlightedObject = null;
-            if (Input.GetMouseButtonDown(0)) {
-                HaloOff(selectedObject);
-                selectedObject = null;
-            }
         }
     }
-    private void HaloOn(GameObject obj) {
-        if (obj) {
-            halo = (Behaviour) obj.GetComponent("Halo");
-            if (halo)
-                halo.enabled = true;
+
+    private void LeftClick() {
+        // Deselect any other objects
+        CircleOff(selectedObject);
+        
+        if (highlightedObject != null && highlightedObject.tag == "Selectable") {
+            selectedObject = highlightedObject;
+            selectedObjectInfo = selectedObject.GetComponent<ObjectInfo>();
+            if (selectedObjectInfo) selectedObjectInfo.isSelected = true;
+
+            CircleOn(selectedObject);
+        }
+        else {
+            selectedObject = null;
         }
     }
-    private void HaloOff(GameObject obj) {
+
+    private void CircleOn(GameObject obj) {
         if (obj) {
-            halo = (Behaviour) obj.GetComponent("Halo");
-            if (halo)
-                halo.enabled = false;
+            circle = obj.GetComponent<LineRenderer>();
+            if (circle)
+                circle.enabled = true;
+        }
+    }
+    private void CircleOff(GameObject obj) {
+        if (obj) {
+            circle = obj.GetComponent<LineRenderer>();
+            if (circle)
+                circle.enabled = false;
         }
     }
 }
