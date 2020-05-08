@@ -46,13 +46,15 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\GameGrid.cs" />
      <Compile Include="Assets\Scripts\GatherManager.cs" />
-     <Compile Include="Assets\Scripts\GridTest.cs" />
      <Compile Include="Assets\Scripts\GroundCircle.cs" />
+     <Compile Include="Assets\Scripts\MinerController.cs" />
      <Compile Include="Assets\Scripts\ObjectInfo.cs" />
      <Compile Include="Assets\Scripts\ResourceManager.cs" />
      <Compile Include="Assets\Scripts\SelectOnClick.cs" />
+     <Compile Include="Assets\Scripts\Spawner.cs" />
+     <Compile Include="Assets\Scripts\Tasks.cs" />
+     <Compile Include="Assets\Scripts\UIManager.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>

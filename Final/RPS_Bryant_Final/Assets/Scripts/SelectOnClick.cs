@@ -1,13 +1,26 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectOnClick : MonoBehaviour {
-    public GameObject selectedObject = null;
+    
+//    public GameObject selectedObject = null;
+    public static List<GameObject> selectedUnits;
+    
     public GameObject highlightedObject = null;
+    public bool hasPrimary;
+    public GameObject primaryObject;
+    public RectTransform selectionBox;
+
+    private Vector2 startPos;
 
     private Ray ray;
     private RaycastHit hitData;
     LineRenderer circle;
     private ObjectInfo selectedObjectInfo;
+
+    
 
     private void Update() {
 
@@ -22,41 +35,79 @@ public class SelectOnClick : MonoBehaviour {
                 highlightedObject = hitData.transform.gameObject;
             }
             if (Input.GetMouseButtonDown(0)) {
-                LeftClick();
+                
+                startPos = Input.mousePosition;
+            }
+            // Mouse released
+            if (Input.GetMouseButtonUp(0)) {
+                UnitCheck();
+            }
+            // mouse held
+            if (Input.GetMouseButton(0)){
+                UpdateBox(Input.mousePosition);
             }
         } else {
             highlightedObject = null;
         }
     }
 
-    private void LeftClick() {
-        // Deselect any other objects
-        CircleOff(selectedObject);
+    private void UnitCheck() {
+        selectionBox.gameObject.SetActive(false);
+        selectedUnits = new List<GameObject>();
+        // bottom left position
+        Vector2 min = selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2);
+        // top right position
+        Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
+
+        foreach (GameObject unit in CameraController.GetUnits()) {
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(unit.transform.position);
+            ObjectInfo unitInfo = unit.GetComponent<ObjectInfo>();
+
+            // make sure everything is deselected first
+            unitInfo.isSelected = false;
+
+            if(screenPos.x > min.x && screenPos.x < max.x && 
+                screenPos.y > min.y && screenPos.y < max.y) {
+                    selectedUnits.Add(unit);
+                    unitInfo.isSelected = true;
+            }
+            else if (hitData.collider.gameObject == unit) {
+                selectedUnits.Add(unit);
+                unitInfo.isSelected = true;
+            }
+        }
+        if (selectedUnits.Count == 0) {
+            foreach (GameObject str in CameraController.GetStructures()) {
+                Vector3 screenPos = Camera.main.WorldToScreenPoint(str.transform.position);
+                ObjectInfo strInfo = str.GetComponent<ObjectInfo>();
+                // make sure everything is deselected first
+                
+                strInfo.isSelected = false;
+
+                if(screenPos.x > min.x && screenPos.x < max.x && 
+                    screenPos.y > min.y && screenPos.y < max.y) {
+                        selectedUnits.Add(str);
+                        strInfo.isSelected = true;
+                }
+                else if (hitData.collider.gameObject == str) {
+                    selectedUnits.Add(str);
+                    strInfo.isSelected = true;
+                }
+            }
+        }
+    }
+    
+    private void UpdateBox(Vector2 curMousePos) {
+        if(!selectionBox.gameObject.activeInHierarchy) {
+            selectionBox.gameObject.SetActive(true);
+        }
+        float width = curMousePos.x - startPos.x;
+        float height = curMousePos.y - startPos.y;
         
-        if (highlightedObject != null && highlightedObject.tag == "Selectable") {
-            selectedObject = highlightedObject;
-            selectedObjectInfo = selectedObject.GetComponent<ObjectInfo>();
-            if (selectedObjectInfo) selectedObjectInfo.isSelected = true;
+        selectionBox.sizeDelta = new Vector2(Mathf.Abs(width),Mathf.Abs(height));
+        selectionBox.anchoredPosition = startPos + 
+                                        new Vector2(width / 2, height / 2);
 
-            CircleOn(selectedObject);
-        }
-        else {
-            selectedObject = null;
-        }
     }
 
-    private void CircleOn(GameObject obj) {
-        if (obj) {
-            circle = obj.GetComponent<LineRenderer>();
-            if (circle)
-                circle.enabled = true;
-        }
-    }
-    private void CircleOff(GameObject obj) {
-        if (obj) {
-            circle = obj.GetComponent<LineRenderer>();
-            if (circle)
-                circle.enabled = false;
-        }
-    }
 }

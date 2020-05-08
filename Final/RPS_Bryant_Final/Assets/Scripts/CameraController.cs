@@ -5,19 +5,26 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
 
-    public float panSpeed = 0.5f;
+    public static GameObject[] unitList;
+    public static GameObject[] structList;
+
+    public float panSpeed = 0.3f;
     public float rotateSpeed = 80f;
     public float rotateAmount = 80f;
     public float zoomSpeed = 20f;
     private Quaternion rotation;
 
-    private float panDetect = 15f;
-    private float minHeight = 5f;
-    private float maxHeight = 20f;
+    private float panDetect = 30f;
+    private float minHeight = 4f;
+    private float maxHeight = 15f;
+
+   
 
     // Start is called before the first frame update
     void Start()
     {
+        RefreshUnits();
+        RefreshStructures();
         rotation = Camera.main.transform.rotation;
     }
 
@@ -30,6 +37,23 @@ public class CameraController : MonoBehaviour
             Camera.main.transform.rotation = rotation;
         }
     }
+
+    public static GameObject[] GetUnits() {
+        return unitList;
+    }
+
+    public static void RefreshUnits() {
+        unitList = GameObject.FindGameObjectsWithTag("Unit");
+    }
+
+    public static void RefreshStructures() {
+        structList = GameObject.FindGameObjectsWithTag("ProductionBuilding");
+    }
+    
+    public static GameObject[] GetStructures() {
+        return structList;
+    }
+    
 
     void MoveCamera() {
         float camX = Camera.main.transform.position.x;

@@ -6,19 +6,20 @@ public class ResourceManager : MonoBehaviour
 {
     // Like food in other games
     // how many units you have
-    public float hands;
+    public int hands;
 
     // how many units you can have
-    public float maxHands = 25;
+    public static int maxHands = 25;
 
     // Like gold in other games
     // how much buying power you have
-    public float surplusHands;
+    // aka: use turns to buy hands
+    public int turns;
 
     
     void Start()
     {
-        surplusHands = 10f;
+        turns = 10;
     }
 
     // Update is called once per frame
@@ -27,7 +28,5 @@ public class ResourceManager : MonoBehaviour
         
     }
 
-    public void IncreaseHands() {
-        surplusHands++;
-    }
+    
 }
