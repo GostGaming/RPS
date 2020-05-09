@@ -17,12 +17,13 @@ public class CameraController : MonoBehaviour
     private float panDetect = 30f;
     private float minHeight = 4f;
     private float maxHeight = 15f;
-
+    private ResourceManager resourceManager;
    
 
     // Start is called before the first frame update
     void Start()
     {
+        resourceManager = gameObject.GetComponent<ResourceManager>();
         RefreshUnits();
         RefreshStructures();
         rotation = Camera.main.transform.rotation;
@@ -44,6 +45,7 @@ public class CameraController : MonoBehaviour
 
     public static void RefreshUnits() {
         unitList = GameObject.FindGameObjectsWithTag("Unit");
+        
     }
 
     public static void RefreshStructures() {

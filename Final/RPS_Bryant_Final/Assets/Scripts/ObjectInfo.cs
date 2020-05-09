@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class ObjectInfo : MonoBehaviour
 {
+    public UnitTypes unitType;
+    public float unitHealth;
     public string objName;
-    public bool isSelected;
     public string objDescription;
+    public bool isSelected;
     public LineRenderer circle;
-    public Tasks task; 
-    
+    public Tasks task;
+
+   
 }

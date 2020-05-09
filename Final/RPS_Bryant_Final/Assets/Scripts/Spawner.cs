@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+/**
+* Controller for player spawn building
+*/
 public class Spawner : ObjectInfo
 {
     public NavMeshAgent navAgent;
@@ -13,6 +16,10 @@ public class Spawner : ObjectInfo
     // only allow 5 units in queue at a time
     public int maxQueueSize = 5;
     public bool isSpawning;
+    // Get unit prefabs
+    public GameObject rockUnit;
+    public GameObject paperUnit;
+    public GameObject scissorsUnit;
 
     public ResourceManager resourceManager;
 
@@ -21,8 +28,9 @@ public class Spawner : ObjectInfo
     {
         GameObject player =  GameObject.FindGameObjectWithTag("MainCamera");
         resourceManager = player.GetComponent<ResourceManager>();
-        
+
         unitQueue = new Queue<GameObject>();
+        
         this.objName = "Spawner";
         this.objDescription = "Used to spawn one of three units: Rock, Paper, or Scissors.";
         this.isSelected = false;
@@ -42,6 +50,10 @@ public class Spawner : ObjectInfo
             countDown--;
             Debug.Log(countDown);
         }
+        if(this.unitHealth <= 0) {
+            Destroy(gameObject);
+        }
+        
     }
 
     public void addToQueue(GameObject unit) {
@@ -55,14 +67,35 @@ public class Spawner : ObjectInfo
         }
     }
 
+    public void spawnUnit(UnitTypes unit) {
+        GameObject spawnUnit = null;
+        switch (unit) {
+            case UnitTypes.RockUnit:
+                spawnUnit = rockUnit;
+                break;
+            case UnitTypes.PaperUnit:
+                spawnUnit = paperUnit;
+                break;
+            case UnitTypes.ScissorsUnit:
+                spawnUnit = scissorsUnit;
+                break;
+        }
+        Instantiate(spawnUnit);
+        resourceManager.turns--;
+        if(unitQueue.Count > 0) {
+            SpawnTick();
+        }
+    }
+
     IEnumerator SpawnTick() {
         while (true) {
             yield return new WaitForSeconds(spawnDelay);
             if(isSpawning) {
                 if (unitQueue.Peek() != null) {
-                    Instantiate(unitQueue.Dequeue());
+                    UnitTypes type = 
+                            unitQueue.Dequeue().GetComponent<ObjectInfo>().unitType;
+                    spawnUnit(type);
                     countDown = spawnDelay;
-                    resourceManager.turns--;
                 }
                 else {
                     isSpawning = false;

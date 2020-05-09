@@ -121,5 +121,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60bad062b24a584448542d180d05fea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hands: 0
   turns: 0

@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 9200960099537064653}
   - component: {fileID: 9200960099537064652}
   - component: {fileID: 9200960099537064655}
-  - component: {fileID: 9200960099537064646}
   - component: {fileID: 9200960099537064649}
   - component: {fileID: 9200960099537064648}
+  - component: {fileID: 2772795660905386584}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: ProductionBuilding
@@ -113,18 +113,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
---- !u!122 &9200960099537064646
-Halo:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9200960099537064654}
-  m_Enabled: 0
-  m_Color:
-    serializedVersion: 2
-    rgba: 4294901767
-  m_Size: 1
 --- !u!120 &9200960099537064649
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -237,3 +225,34 @@ MonoBehaviour:
   xradius: 1
   zradius: 1
   color: {r: 0, g: 1, b: 0, a: 1}
+--- !u!114 &2772795660905386584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9200960099537064654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e16c59d9e8701344b8847df84a236d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitType: 1
+  unitHealth: 150
+  objName: Spawner
+  objDescription: 
+  isSelected: 0
+  circle: {fileID: 9200960099537064649}
+  task: 4
+  navAgent: {fileID: 0}
+  spawnDelay: 15
+  countDown: 0
+  maxQueueSize: 5
+  isSpawning: 0
+  rockUnit: {fileID: 1816626133411116134, guid: 68ea2e9861007b141897467c7b5653f6,
+    type: 3}
+  paperUnit: {fileID: 3295540309406719276, guid: 6078062e05bef11468c43846d1efa71d,
+    type: 3}
+  scissorsUnit: {fileID: 8438218989975140866, guid: b838b68acaaa297489a7daf75c21a83f,
+    type: 3}
+  resourceManager: {fileID: 189782748, guid: 438cc899d4c49f6489a8d9761d040115, type: 3}

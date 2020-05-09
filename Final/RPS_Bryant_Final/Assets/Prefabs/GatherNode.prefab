@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5724322388485013388}
   - component: {fileID: 5724322388485013389}
   - component: {fileID: 5724322388485013390}
-  - component: {fileID: 5724322388485013385}
+  - component: {fileID: 4260107642435286779}
   m_Layer: 0
   m_Name: GatherNode
   m_TagString: GatherNode
@@ -111,7 +111,7 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
---- !u!114 &5724322388485013385
+--- !u!114 &4260107642435286779
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,8 +120,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5724322388485013391}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60dbee97e7e5dc94d84fb47e9f7795ce, type: 3}
+  m_Script: {fileID: 11500000, guid: e58766892365f5a4bbbabda7e5932918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitType: 1
+  unitHealth: 0
+  objName: GatherNode
+  objDescription: Gather turns to produce hands
+  isSelected: 0
+  circle: {fileID: 0}
+  task: 4
   availableTurns: 100
   gatherers: 0

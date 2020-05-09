@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class MinerController : ObjectInfo
 {
@@ -11,26 +12,38 @@ public class MinerController : ObjectInfo
     public int heldTurns;
     public int MAX_HELD_TURNS = 10;
 
-    public GameObject[] depositNodes;
-    GameObject miningNode;
+    public GameObject depositNode;
+    GameObject[] gatherNodes;
+    GameObject gatherNode;
     public NavMeshAgent navAgent;
+    public SelectOnClick selectOnClick;
 
     void Start()
     {
-        GameObject player =  GameObject.FindGameObjectWithTag("MainCamera");
-        resourceManager = player.GetComponent<ResourceManager>();
-        setTask(Tasks.Idle);
-        navAgent = GetComponent<NavMeshAgent>();
-
+        // Unit information
+        this.unitType = UnitTypes.Miner;
         objName = "Miner";
         objDescription = "Basic mining unit. Right click on mining node " +
         "to begin harvesting turns.";
+        this.unitHealth = 50f;
 
+        // Selection circle initiation
         this.circle = GetComponent<LineRenderer>();
-
-        isGathering = false;
         this.isSelected = false;
+        
+        // Get player camera and attached resource manager
+        resourceManager = Camera.main.GetComponent<ResourceManager>();
+        resourceManager.Hands++;
+        selectOnClick = Camera.main.GetComponent<SelectOnClick>();
+        // Task initiation
+        setTask(Tasks.Idle);
+        isGathering = false;
+
+        navAgent = GetComponent<NavMeshAgent>();
+
         StartCoroutine(GatherTick());
+        refreshGatherNodes();
+        
     }
     
     void Update()
@@ -38,7 +51,7 @@ public class MinerController : ObjectInfo
          if (this.circle != null) {
             this.circle.enabled = isSelected;
         }
-        if (miningNode == null) {
+        if (gatherNode == null) {
             if (heldTurns != 0) {
                 DeliverTurns();
             }
@@ -46,7 +59,11 @@ public class MinerController : ObjectInfo
                 setTask(Tasks.Idle);
             }
         }
+        if(this.unitHealth <= 0) {
+            Destroy(gameObject);
+        }
         if (this.isSelected && Input.GetMouseButtonDown(1)) {
+            
             RightClick();
         }
         if (heldTurns >= MAX_HELD_TURNS) {
@@ -62,13 +79,14 @@ public class MinerController : ObjectInfo
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100)) {
             if (hit.collider.tag == "Ground") {
-                navAgent.destination = hit.point;
                 setTask(Tasks.Moving);
+                navAgent.destination = hit.point;
             }
             else {
+                // not ground, check object tag
                 if (hit.collider.tag == "GatherNode") {
                     setTask(Tasks.Gathering);
-                    miningNode = hit.collider.gameObject;
+                    gatherNode = hit.collider.gameObject;
                 }
                 else if (hit.collider.tag =="DepositNode"){
                     setTask(Tasks.Delivering);
@@ -80,22 +98,33 @@ public class MinerController : ObjectInfo
     public void OnTriggerEnter(Collider other) {
         GameObject hitObject = other.gameObject;
         if (hitObject.tag == "GatherNode" && getTask() == Tasks.Gathering) {
-            hitObject.GetComponent<GatherManager>().gatherers++;
+            hitObject.GetComponent<GatherNode>().gatherers++;
             isGathering = true;
+            gatherNode = hitObject;
+            GatherTick();
+            // stop moving while gathering
             
-             GatherTick();
         }
         if (hitObject.tag == "DepositNode" && getTask() == Tasks.Delivering) {
             // deposit turns and set held to zero
             resourceManager.turns += heldTurns;
             heldTurns = 0;
+            
             // go back to the mining node if possible
-            if (miningNode != null) {
-                navAgent.destination = miningNode.transform.position;
+            if (gatherNode != null) {
+                navAgent.destination = gatherNode.transform.position;
                 setTask(Tasks.Gathering);
             }
+            // Gather node is depleted, find another one
             else {
-                setTask(Tasks.Idle);
+                gatherNode = findGatherNode();
+                if (gatherNode != null) {
+                    navAgent.destination = gatherNode.transform.position;
+                    setTask(Tasks.Gathering);
+                }
+                else  {
+                    setTask(Tasks.Idle);
+                }
             }
         }
 
@@ -104,32 +133,37 @@ public class MinerController : ObjectInfo
     public void OnTriggerExit(Collider other) {
         GameObject hitObject = other.gameObject;
         if (hitObject.tag == "GatherNode") {
-            hitObject.GetComponent<GatherManager>().gatherers--;
+            hitObject.GetComponent<GatherNode>().gatherers--;
             isGathering = false;
         }
     }
 
     private void DeliverTurns() {
-        depositNodes = GameObject.FindGameObjectsWithTag("DepositNode");
-        navAgent.destination = GetClosestDepositNode(depositNodes).transform.position;
-        depositNodes = null;
+        navAgent.destination = depositNode.transform.position;
         setTask(Tasks.Delivering);
     }
 
-    private GameObject GetClosestDepositNode(GameObject[] depositNodes) {
+    private GameObject findGatherNode() {
         GameObject closestNode = null;
-        float minDistance = Mathf.Infinity;
+        gatherNodes = GameObject.FindGameObjectsWithTag("GatherNode");
+        // No nodes to gather from, don't bother with the rest
+        if (gatherNodes.Length == 0) return null;
+
+        float min = Mathf.Infinity;
         Vector3 position = transform.position;
 
-        foreach (GameObject obj in depositNodes) {
-            Vector3 direction = obj.transform.position - position;
-            float nodeDistance = direction.sqrMagnitude;
-            if (nodeDistance < minDistance) {
-                minDistance = nodeDistance;
-                closestNode = obj;
+        foreach (GameObject node in gatherNodes) {
+            Vector3 direction = node.transform.position - position;
+            float nodeDist = direction.sqrMagnitude;
+            if (nodeDist < min) {
+                min = nodeDist;
+                closestNode = node;
             }
         }
         return closestNode;
+    }
+    private void refreshGatherNodes() {
+        gatherNodes = GameObject.FindGameObjectsWithTag("GatherNode");
     }
 
     private void setTask(Tasks setTask) {
@@ -138,10 +172,14 @@ public class MinerController : ObjectInfo
     private Tasks getTask() {
         return this.task;
     }
+     void OnDestroy() {
+        selectOnClick.selectedUnits.Remove(gameObject);
+        resourceManager.Hands--;
+    }
 
     IEnumerator GatherTick() {
         while (true) {
-            yield return new WaitForSeconds(GatherManager.GATHER_TIME);
+            yield return new WaitForSeconds(GatherNode.GATHER_TIME);
             if(isGathering) {
                 heldTurns++;
             }

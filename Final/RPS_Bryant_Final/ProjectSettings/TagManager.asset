@@ -11,6 +11,8 @@ TagManager:
   - ProductionBuilding
   - PauseUI
   - SpawnerUI
+  - EnemyDepositNode
+  - EnemyUnit
   layers:
   - Default
   - TransparentFX

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,28 +12,30 @@ public class UIManager : MonoBehaviour
     public Text turnCount;
     public Text turnCountbg;
     public ResourceManager resourceManager;
+    public string currentScene;
 
     void Start()
     {
-        Time.timeScale = 1;
-        pauseObjects = GameObject.FindGameObjectsWithTag("PauseUI");
-        
-
-        hidePaused();
-        
+        currentScene = SceneManager.GetActiveScene().name;
+        if(currentScene == "MainScene") {
+            Time.timeScale = 1;
+            pauseObjects = GameObject.FindGameObjectsWithTag("PauseUI");
+            hidePaused();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            pauseSwitch();
+        if(currentScene == "MainScene") {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                pauseSwitch();
+            }
+            handCount.text = "Hand Count: " + resourceManager.Hands;
+            handCountbg.text = "Hand Count: " + resourceManager.Hands;
+            turnCount.text = "Turn Count: " + resourceManager.turns;
+            turnCountbg.text = "Turn Count: " + resourceManager.turns;
         }
-        handCount.text = "Hand Count: " + resourceManager.hands;
-        handCountbg.text = "Hand Count: " + resourceManager.hands;
-        turnCount.text = "Turn Count: " + resourceManager.turns;
-        turnCountbg.text = "Turn Count: " + resourceManager.turns;
-
     }
     // switch pause state
     public void pauseSwitch() {
@@ -56,5 +59,24 @@ public class UIManager : MonoBehaviour
         foreach(GameObject obj in pauseObjects) {
             obj.SetActive(false);
         }
+    }    
+    
+    public void LoadScene() {
+        if(currentScene == "MainScene") {
+            SceneManager.LoadScene("MainMenu");
+        }
+        else SceneManager.LoadScene("MainScene");
+    }
+
+    public void ExitButton() {
+        Application.Quit();
+        
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    public void RestartLevel() {
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// Ignore error, something with visual studio
 using UnityEngine.UI;
 
 public class SelectOnClick : MonoBehaviour {
     
 //    public GameObject selectedObject = null;
-    public static List<GameObject> selectedUnits;
+    public List<GameObject> selectedUnits;
     
     public GameObject highlightedObject = null;
     public bool hasPrimary;
@@ -58,8 +59,19 @@ public class SelectOnClick : MonoBehaviour {
         Vector2 min = selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2);
         // top right position
         Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
-
-        foreach (GameObject unit in CameraController.GetUnits()) {
+        GameObject[] units = CameraController.GetUnits();
+        GameObject[] structures = CameraController.GetStructures();
+        // make sure everything is deselected first
+        // I know we iterate through at worst 4 times, need to find better way to deselect everything
+        foreach (GameObject unit in units) {
+            ObjectInfo unitInfo = unit.GetComponent<ObjectInfo>();
+            unitInfo.isSelected = false;
+        }
+        foreach (GameObject str in structures) {
+            ObjectInfo unitInfo = str.GetComponent<ObjectInfo>();
+            unitInfo.isSelected = false;
+        }
+        foreach (GameObject unit in units) {
             Vector3 screenPos = Camera.main.WorldToScreenPoint(unit.transform.position);
             ObjectInfo unitInfo = unit.GetComponent<ObjectInfo>();
 
@@ -77,11 +89,10 @@ public class SelectOnClick : MonoBehaviour {
             }
         }
         if (selectedUnits.Count == 0) {
-            foreach (GameObject str in CameraController.GetStructures()) {
+            foreach (GameObject str in structures) {
                 Vector3 screenPos = Camera.main.WorldToScreenPoint(str.transform.position);
                 ObjectInfo strInfo = str.GetComponent<ObjectInfo>();
                 // make sure everything is deselected first
-                
                 strInfo.isSelected = false;
 
                 if(screenPos.x > min.x && screenPos.x < max.x && 

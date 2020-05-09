@@ -122,7 +122,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7335840564554459484}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -261,14 +261,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7d3b4629fbe03488a6a132d664a8d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitType: 0
+  unitHealth: 50
   objName: Miner
+  objDescription: Basic harvesting unit. Collects turns from gather nodes
   isSelected: 0
-  objDescription: 
-  circle: {fileID: 0}
+  circle: {fileID: 7335840564320955536}
   task: 4
   resourceManager: {fileID: 189782748, guid: 438cc899d4c49f6489a8d9761d040115, type: 3}
-  isGathering: 0
+  isGathering: 1
   heldTurns: 0
   MAX_HELD_TURNS: 10
-  depositNodes: []
+  depositNode: {fileID: 2992959726614076110, guid: ac3b0a3a7c60b714fa134a389fa34ed0,
+    type: 3}
   navAgent: {fileID: 7335840564320955547}
