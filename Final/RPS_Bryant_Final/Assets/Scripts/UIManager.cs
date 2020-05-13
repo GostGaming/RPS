@@ -60,6 +60,11 @@ public class UIManager : MonoBehaviour
             obj.SetActive(false);
         }
     }    
+
+    public void GameOver() {
+        Time.timeScale = 0;
+        showPaused();
+    }
     
     public void LoadScene() {
         if(currentScene == "MainScene") {

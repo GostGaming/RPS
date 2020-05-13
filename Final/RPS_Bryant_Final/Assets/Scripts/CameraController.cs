@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour
     private float minHeight = 4f;
     private float maxHeight = 15f;
     private ResourceManager resourceManager;
-   
+    public UIManager uiManager;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +40,7 @@ public class CameraController : MonoBehaviour
     }
 
     public static GameObject[] GetUnits() {
+        RefreshUnits();
         return unitList;
     }
 
@@ -53,6 +54,7 @@ public class CameraController : MonoBehaviour
     }
     
     public static GameObject[] GetStructures() {
+        RefreshStructures();
         return structList;
     }
     
@@ -105,6 +107,17 @@ public class CameraController : MonoBehaviour
         if (destination != origin) {
             Camera.main.transform.eulerAngles = 
                 Vector3.MoveTowards(origin, destination, Time.deltaTime * rotateSpeed);
+        }
+    }
+
+
+
+    IEnumerator lossCheck() {
+        while (true) {
+            yield return new WaitForSeconds(1f);
+            if (GetUnits().Length <= 0 || GetStructures().Length <= 0) {
+               uiManager.GameOver();
+            }
         }
     }
 }

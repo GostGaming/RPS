@@ -37,8 +37,6 @@ public class EnemyMiner : ObjectInfo
         navAgent = GetComponent<NavMeshAgent>();
         
         depositNode = GameObject.FindGameObjectWithTag("EnemyDepositNode");
-        
-        resourceManager.Hands++;
 
         StartCoroutine(GatherTick());
         StartGather();

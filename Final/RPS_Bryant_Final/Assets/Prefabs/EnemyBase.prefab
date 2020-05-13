@@ -50,7 +50,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60bad062b24a584448542d180d05fea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hands: 0
   turns: 10
 --- !u!1001 &2177327862712044278
 PrefabInstance:
@@ -77,7 +76,7 @@ PrefabInstance:
     - target: {fileID: 716235991903013239, guid: 4674ac977faadd1458f6bbe5951f2bb9,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.85
+      value: -2.8
       objectReference: {fileID: 0}
     - target: {fileID: 716235991903013239, guid: 4674ac977faadd1458f6bbe5951f2bb9,
         type: 3}

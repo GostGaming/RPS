@@ -16,7 +16,11 @@ public class EnemySpawner : ObjectInfo
     public Queue<GameObject> unitQueue;
     // only allow 5 units in queue at a time
     public int maxQueueSize = 5;
+    // how many turns each hand "costs"
+    public int unitCost = 10;
     public bool isSpawning;
+    // Get a decent spawn location
+    public GameObject spawnLoc;
     // Get unit prefabs
     public GameObject rockUnit;
     public GameObject paperUnit;
@@ -27,9 +31,6 @@ public class EnemySpawner : ObjectInfo
     // Start is called before the first frame update
     void Start()
     {
-        GameObject player =  GameObject.FindGameObjectWithTag("MainCamera");
-        resourceManager = player.GetComponent<ResourceManager>();
-
         unitQueue = new Queue<GameObject>();
         
         this.objName = "Spawner";
@@ -38,7 +39,8 @@ public class EnemySpawner : ObjectInfo
         this.circle = GetComponent<LineRenderer>();
         this.task = Tasks.Idle;
         isSpawning = false;
-        
+        countDown = spawnDelay;
+        StartCoroutine(SpawnTick());
     }
 
     // Update is called once per frame
@@ -48,52 +50,62 @@ public class EnemySpawner : ObjectInfo
             this.circle.enabled = isSelected;
         }
         if (isSpawning) {
-            countDown--;
-            Debug.Log(countDown);
+            countDown -= Time.deltaTime;
+            countDown = Mathf.Clamp(countDown, 0, spawnDelay);
+          //  if (countDown <= 0) SpawnTick();
         }
+        if (resourceManager.turns >= unitCost) {
+            addToQueue();
+        }
+        
+        if (!isSpawning && unitQueue.Count > 0) {
+            isSpawning = true;
+            SpawnTick();
+        }
+
         if(this.unitHealth <= 0) {
             Destroy(gameObject);
         }
     }
 
-    public void addToQueue(GameObject unit) {
+    public void addToQueue() {
+        GameObject unit = null;
+        // Even though range is supposed to be inclusive
+        // Game refuses to roll scissors with 0,2
+        int num = Random.Range(0,3);
+        switch (num) {
+            case 0: 
+                unit = rockUnit;
+                break;
+            case 1:
+                unit = paperUnit;
+                break;
+            case 2:
+                unit = scissorsUnit;
+                break;
+            default:
+                unit = scissorsUnit;
+                break;
+        }
         if (unitQueue.Count < maxQueueSize) {
+            resourceManager.turns -= unitCost;
             unitQueue.Enqueue(unit);
-
-            Debug.Log("Adding obj to queue");
+            isSpawning = true;
+            Invoke("SpawnTick", spawnDelay);
+            Debug.Log("Adding " + unit.name + " to queue");
         }
         else {
             Debug.Log("Queue full");
         }
-    }
-    public void spawnUnit(UnitTypes unit) {
-        GameObject spawnUnit = null;
-        switch (unit) {
-            case UnitTypes.RockUnit:
-                spawnUnit = rockUnit;
-                break;
-            case UnitTypes.PaperUnit:
-                spawnUnit = paperUnit;
-                break;
-            case UnitTypes.ScissorsUnit:
-                spawnUnit = scissorsUnit;
-                break;
-        }
-        Instantiate(spawnUnit);
     }
 
     IEnumerator SpawnTick() {
         while (true) {
             yield return new WaitForSeconds(spawnDelay);
             if(isSpawning) {
-                if (unitQueue.Peek() != null) {
-                    Instantiate(unitQueue.Dequeue());
-                    countDown = spawnDelay;
-                    resourceManager.turns--;
-                }
-                else {
-                    isSpawning = false;
-                }
+                Instantiate(unitQueue.Dequeue(), spawnLoc.transform);
+                countDown = spawnDelay;
+                resourceManager.Hands++;
             }
         }
     }

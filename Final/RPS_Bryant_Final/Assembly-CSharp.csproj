@@ -45,6 +45,7 @@
      <Compile Include="Assets\Scripts\GroundCircle.cs" />
      <Compile Include="Assets\Scripts\MinerController.cs" />
      <Compile Include="Assets\Scripts\ObjectInfo.cs" />
+     <Compile Include="Assets\Scripts\Projectile.cs" />
      <Compile Include="Assets\Scripts\ResourceManager.cs" />
      <Compile Include="Assets\Scripts\SelectOnClick.cs" />
      <Compile Include="Assets\Scripts\Spawner.cs" />

@@ -14,6 +14,8 @@ public class CombatUnit : ObjectInfo
     public float attackDelay = 1f;
     public float attackDamage = 10f;
     public GameObject targetEnemy;
+    public GameObject projectile;
+    public GameObject projectilePoint;
     public SelectOnClick selectOnClick;
 
     // Start is called before the first frame update
@@ -25,7 +27,6 @@ public class CombatUnit : ObjectInfo
         this.unitHealth = 100;
 
         resourceManager = Camera.main.GetComponent<ResourceManager>();
-        resourceManager.Hands++;
         selectOnClick = Camera.main.GetComponent<SelectOnClick>();
         navAgent = GetComponent<NavMeshAgent>();
         
@@ -77,6 +78,7 @@ public class CombatUnit : ObjectInfo
             Vector3 enemyPosition = targetEnemy.transform.position;
             if (isInRange(enemyPosition)) {
                 enemyInfo.unitHealth -= Mathf.Floor(attackDamage * typeCompare(enemyInfo.unitType));
+                if (unitType == UnitTypes.PaperUnit) fireArrow();
             }
             else {
                 navAgent.destination = enemyPosition;
@@ -90,6 +92,11 @@ public class CombatUnit : ObjectInfo
         // run attack animation
         // intantiate arrows
        
+    }
+
+    private void fireArrow() {
+        GameObject arrow = Instantiate(projectile, projectilePoint.transform);
+        arrow.GetComponent<Projectile>().enemy = targetEnemy;
     }
 
     public bool isInRange(Vector3 pos) {
@@ -121,7 +128,9 @@ public class CombatUnit : ObjectInfo
                 float unitDist = direction.sqrMagnitude;
                 if (unitDist < min) {
                     min = unitDist;
-                    closestEnemyUnit = unit;
+                    if (min < attackRange) {
+                        closestEnemyUnit = unit;
+                    }
                 }
             }
             targetEnemy = closestEnemyUnit;

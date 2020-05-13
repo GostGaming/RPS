@@ -248,7 +248,9 @@ MonoBehaviour:
   spawnDelay: 15
   countDown: 0
   maxQueueSize: 5
+  unitCost: 10
   isSpawning: 0
+  spawnLoc: {fileID: 0}
   rockUnit: {fileID: 1816626133411116134, guid: 68ea2e9861007b141897467c7b5653f6,
     type: 3}
   paperUnit: {fileID: 3295540309406719276, guid: 6078062e05bef11468c43846d1efa71d,

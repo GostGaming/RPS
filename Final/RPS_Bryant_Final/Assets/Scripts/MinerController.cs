@@ -33,7 +33,6 @@ public class MinerController : ObjectInfo
         
         // Get player camera and attached resource manager
         resourceManager = Camera.main.GetComponent<ResourceManager>();
-        resourceManager.Hands++;
         selectOnClick = Camera.main.GetComponent<SelectOnClick>();
         // Task initiation
         setTask(Tasks.Idle);
@@ -63,7 +62,6 @@ public class MinerController : ObjectInfo
             Destroy(gameObject);
         }
         if (this.isSelected && Input.GetMouseButtonDown(1)) {
-            
             RightClick();
         }
         if (heldTurns >= MAX_HELD_TURNS) {
@@ -127,7 +125,6 @@ public class MinerController : ObjectInfo
                 }
             }
         }
-
     }
     
     public void OnTriggerExit(Collider other) {

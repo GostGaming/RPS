@@ -20,7 +20,8 @@ public class ResourceManager : MonoBehaviour
 
     void Start()
     {
-        hands = 0;
+        // start at two for the first two builders
+        hands = 2;
         turns = 10;
     }
 }
