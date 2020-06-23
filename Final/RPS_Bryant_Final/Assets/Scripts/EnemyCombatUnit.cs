@@ -23,7 +23,10 @@ public class EnemyCombatUnit : ObjectInfo
         // circle not for selected but attack blink
         this.circle = GetComponent<LineRenderer>();
         this.isSelected = false;
-        this.unitHealth = 100;
+
+        this.maxHealth = 100f;
+        this.unitHealth = maxHealth;
+
         resourceManager = Camera.main.GetComponent<ResourceManager>();
         navAgent = GetComponent<NavMeshAgent>();
         
@@ -37,6 +40,12 @@ public class EnemyCombatUnit : ObjectInfo
     // Update is called once per frame
     void Update()
     {
+       /** // Healthbar
+        healthBar.fillAmount = this.unitHealth / maxHealth;
+        // Ensure healthbar "billboards" properly
+        healthBarCanvas.transform.rotation = Camera.main.transform.rotation;
+*/
+
         if (this.circle != null) {
             this.circle.enabled = isSelected;
         }

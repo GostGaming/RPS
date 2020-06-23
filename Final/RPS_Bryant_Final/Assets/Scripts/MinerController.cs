@@ -18,6 +18,10 @@ public class MinerController : ObjectInfo
     public NavMeshAgent navAgent;
     public SelectOnClick selectOnClick;
 
+    public GameObject tell;
+    public Material[] tellMats;
+    
+
     void Start()
     {
         // Unit information
@@ -25,7 +29,9 @@ public class MinerController : ObjectInfo
         objName = "Miner";
         objDescription = "Basic mining unit. Right click on mining node " +
         "to begin harvesting turns.";
-        this.unitHealth = 50f;
+
+        this.maxHealth = 50f;
+        this.unitHealth = maxHealth;
 
         // Selection circle initiation
         this.circle = GetComponent<LineRenderer>();
@@ -40,6 +46,11 @@ public class MinerController : ObjectInfo
 
         navAgent = GetComponent<NavMeshAgent>();
 
+        // Set Unit "tell" color to player color
+        // TODO: Mostly for future use. Maybe set tag here and conditionals to NPC
+        tell.GetComponent<MeshRenderer>().material = tellMats[0];
+
+
         StartCoroutine(GatherTick());
         refreshGatherNodes();
         
@@ -47,9 +58,16 @@ public class MinerController : ObjectInfo
     
     void Update()
     {
-         if (this.circle != null) {
+        // Healthbar
+        healthBar.fillAmount = this.unitHealth / maxHealth;
+        // Ensure healthbar "billboards" properly
+        healthBarCanvas.transform.rotation = Camera.main.transform.rotation;
+    
+        // Unit selection circle
+        if (this.circle != null) {
             this.circle.enabled = isSelected;
         }
+        // Deliver turns if the node dies
         if (gatherNode == null) {
             if (heldTurns != 0) {
                 DeliverTurns();
@@ -58,15 +76,20 @@ public class MinerController : ObjectInfo
                 setTask(Tasks.Idle);
             }
         }
+        // Unit death
         if(this.unitHealth <= 0) {
             Destroy(gameObject);
         }
+
+        // Only listen to right clicks if it's selected
         if (this.isSelected && Input.GetMouseButtonDown(1)) {
             RightClick();
         }
+        // Reached max turns, turn them in
         if (heldTurns >= MAX_HELD_TURNS) {
             DeliverTurns();
         }
+        // Not doing anything, set task to idle
         if (navAgent.speed <= 0 && getTask() != Tasks.Gathering) {
             setTask(Tasks.Idle);
         }
@@ -170,6 +193,8 @@ public class MinerController : ObjectInfo
         return this.task;
     }
      void OnDestroy() {
+        // Deselect object so we don't try to access it after it's dead
+        this.isSelected = false;
         selectOnClick.selectedUnits.Remove(gameObject);
         resourceManager.Hands--;
     }

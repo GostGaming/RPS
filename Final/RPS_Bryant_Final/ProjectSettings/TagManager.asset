@@ -13,6 +13,7 @@ TagManager:
   - SpawnerUI
   - EnemyDepositNode
   - EnemyUnit
+  - UnitTell
   layers:
   - Default
   - TransparentFX

@@ -18,13 +18,18 @@ public class EnemyMiner : ObjectInfo
     GameObject gatherNode;
     public NavMeshAgent navAgent;
 
+    public GameObject tell;
+    public Material[] tellMats;
+
     void Start()
     {
         // Unit information
         this.unitType = UnitTypes.Miner;
         objName = "Enemy Miner";
         objDescription = "Basic mining unit. Destroy this to hinder enemy resource gathering";
-        this.unitHealth = 50f;
+
+        this.maxHealth = 50f;
+        this.unitHealth = maxHealth;
 
         // Selection circle initiation
         this.circle = GetComponent<LineRenderer>();
@@ -36,6 +41,9 @@ public class EnemyMiner : ObjectInfo
 
         navAgent = GetComponent<NavMeshAgent>();
         
+         // Set Unit "tell" color to enemy color
+        tell.GetComponent<MeshRenderer>().material = tellMats[1];
+
         depositNode = GameObject.FindGameObjectWithTag("EnemyDepositNode");
 
         StartCoroutine(GatherTick());
@@ -44,6 +52,12 @@ public class EnemyMiner : ObjectInfo
 
     void Update()
     {
+        // Healthbar
+        healthBar.fillAmount = this.unitHealth / maxHealth;
+        // Ensure healthbar "billboards" properly
+        healthBarCanvas.transform.rotation = Camera.main.transform.rotation;
+    
+
          if (this.circle != null) {
             this.circle.enabled = isSelected;
         }
