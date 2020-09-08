@@ -13,7 +13,7 @@ Controls are listed in the Pause Menu (esc).
 
 [Link to Scripts](https://github.com/GostGaming/RPS/tree/master/Final/RPS_Bryant_Final/Assets/Scripts)
 
-![Title Screen](RPSTitle.png)
+![Title Screen](RPStitle.png)
 
 ![Idle](RPSIdle.png)
 
